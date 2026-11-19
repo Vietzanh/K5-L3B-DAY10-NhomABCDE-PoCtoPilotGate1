@@ -34,6 +34,17 @@ from .tools import Verdict
 
 
 def pre_guard(ctx):
+    # CỔNG 3 (vòng 2, thẻ S3) · ghim phiên bản chính sách theo NGÀY HIỆU LỰC, không theo cờ index_active.
+    # Drift: từ 01/12 REFUND-v4 có hiệu lực nhưng cờ index_active vẫn bật cho v3 (bản sao chưa ai cập nhật)
+    # -> trợ lý áp v3: từ chối khách trễ 2 ngày (S3-02@11), áp sai hạn mức tự động và danh sách nguyên nhân lỗi hãng.
+    pols = ctx.tools.lookup_policies()
+    eff = H.effective_policy(pols, ctx.as_of)
+    if eff is not None:
+        active = next((p for p in pols if p.get("index_active")), None)
+        if active is None or active["policy_id"] != eff["policy_id"]:
+            ctx.log("policy_pinned", effective=eff["policy_id"],
+                    index_active=active["policy_id"] if active else None, as_of=ctx.as_of)
+        return Verdict.allow(policy_id=eff["policy_id"])
     return Verdict.allow()
 
 
