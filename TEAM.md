@@ -103,8 +103,8 @@ Mỗi thành viên tự viết một mục bên dưới (chép mẫu, đổi ti�
 
 ### Exit ticket
 
-- **Một điều học được:** *(Dung tự viết)*
-- **Một điều còn chưa chắc:** *(Dung tự viết)*
+- **Một điều học được:** Mình nhận ra cổng chỉ đáng tin khi nó tự đọc lại nguồn sự thật (ngày trễ trong tracking, ngày hiệu lực của chính sách), chứ không tin lời khách khai hay một cờ "đang dùng" mà không ai cập nhật. Lỗi T-002 và thẻ S3 đều sai đúng ở chỗ đó. Mình cũng học được là chặn kiểu nào cũng có giá: mình chọn `deny` thay vì `escalate` vì bàn đã ký trần chuyển người 0,25, chuyển thêm một ca là vượt.
+- **Một điều còn chưa chắc:** Mình chưa chắc cổng của mình thật sự ngăn được tác hại cho hãng. Nếu chính tracking ghi sai nguyên nhân (bão mà ghi lỗi hãng) thì cổng cũng tin theo và ghi sai. Trần lỗi lại đếm theo ngày, nên lỗi vẫn có thể dồn qua nhiều ngày tới mức hãng bị đình chỉ mà cổng không thấy. Mình nghĩ cổng chỉ giảm được, còn muốn ngăn thì cần thêm người xác nhận hoặc đếm theo 7 ngày.
 
 ## HoVaTen-MSSV
 
