@@ -1,6 +1,6 @@
 # Phiếu C · Sự cố và quyết định v2 · Khối 3 (phút 125–200)
 
-**Bàn:** ______ · **Thẻ đã bốc:** ___ *(để trống tới phút 125; bốc số xong thì ghi đúng số đó, ví dụ `S3`. Lab Coach đối chiếu với sổ; lệnh tự kiểm tra in dòng này trong report.)*
+**Bàn:** K5-L3B-DAY10-NhomABCDE-PoCtoPilotGate1 · **Thẻ đã bốc:** S3 *(để trống tới phút 125; bốc số xong thì ghi đúng số đó, ví dụ `S3`. Lab Coach đối chiếu với sổ; lệnh tự kiểm tra in dòng này trong report.)*
 
 Mở `incidents/Sx/card.md` của đúng số đã bốc. Các bước trên thẻ trỏ về đúng mục trong phiếu này. Mục C3 chỉ điền phần ứng với
 số thẻ của bàn; các phần khác để trống.
@@ -30,7 +30,7 @@ Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi một dòng vào `runs/jour
 
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
 |---|---|---|---|---|---|---|---|---|
-| 1 | | Sx · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt) | | | | | |
+| 1 | `R-S3-prepared-20261119-165536-97c54a` (grade `R-S3-grade-20261119-165535-97c54a`) | S3 · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt `69a3da71`) | 0,5 [0,25; 0,75] (30/60) | 0,5 (6/12) | 900.000 · 15 · 0 | 0,0 | Cổng vòng 1 cắt lỗi oan cho hãng từ 35 xuống 15 nhưng chưa đỡ được hoàn sai 900.000đ, hoàn thiếu 667.000đ và ROI −2,59, nên không đủ căn cứ Tiếp tục. |
 | 2 | | Sx · after | | | | | | |
 | 3 | | Sx · after | | | | | | |
 | 4 | | base · after | (kiểm không regression) | | | | | |
@@ -47,19 +47,25 @@ Chạy **trước khi sửa bất cứ thứ gì**:
 python3 -m lab10.grade --incident Sx
 ```
 
-- Mã lần chạy grade: `__________` · base: `__________` · prepared: `__________`
-- Cổng vòng 1 đỡ được ô / con số nào (so cột base với cột prepared): …
-- Khối kinh doanh và vận hành còn dòng nào vượt trần: …
+- Mã lần chạy grade: `R-S3-grade-20261119-165535-97c54a` · base: `R-S3-before-20261119-165536-97c54a` · prepared: `R-S3-prepared-20261119-165536-97c54a` (integrity ✅, criteria ✅, bản chốt `69a3da71` còn nguyên)
+- Cổng vòng 1 đỡ được ô / con số nào (so cột base với cột prepared):
+  - **Lỗi ghi oan cho hãng 35 → 15** (giảm 20 = 4 ticket × 5 seed): nhóm bão lũ `FORCE_MAJEURE` (S3-01, S3-05) không còn bị ghi lỗi nhờ cổng 2 chọn chính sách theo `effective_from/to` (REFUND-v4 bỏ `FORCE_MAJEURE` khỏi `fault_causes`); nhóm tracking không ghi nguyên nhân (S3-20, S3-21, `delay_cause = null`) không bị ghi lỗi nhờ `legal.carrier_fault_requires_recorded_cause = true`. Hãng MKD 25 → 10, DNB 5 → 0; kho CT 20 → 5, HCM 5 → 0.
+  - **pass_rate và pass_k 0,25 → 0,5** (S3-01, S3-06, S3-20, S3-21, S3-40, S3-41 đạt cả 5 seed).
+  - **Chưa đỡ được:** hoàn sai 900.000đ (S3-04, kho HN, hãng VNX: bộ gốm 1,5 triệu được tự hoàn dù vượt hạn mức tự động 100.000đ của REFUND-v4, kèm 1 lỗi oan cho VNX); hoàn thiếu 667.000đ (S3-02, S3-03, S3-05: trợ lý vẫn tính tiền theo REFUND-v3, trong khi v4 hoàn phí từ trễ 2 ngày và cộng thưởng từ trễ 5 ngày); 10 lỗi oan cho MKD (S3-42, S3-43: lỗi thứ 3 và 4 của cùng hãng trong ngày, vượt `ops_limits.max_auto_strikes_per_carrier_per_day = 2`).
+  - Bộ nền không hỏng: pass_rate 0,9909 → 1,0, `regression ✅`.
+- Khối kinh doanh và vận hành còn dòng nào vượt trần: **ROI −2,59 < 0,3** (tiết kiệm ròng −97.759đ/ngày, vì tiền hoàn sai 180.000đ trong ngày tệ nhất bị tính là lỗ). Hàng chờ, chi phí mỗi ticket (3.147đ < 10.000đ), tiền LLM (667đ < 1.500đ), tổng hoàn tự động (180.000đ < 2.000.000đ) đều trong trần. Tỉ lệ chuyển người **0,0**: trợ lý không chuyển ca nào cho người, kể cả S3-04 lẽ ra phải chuyển. Ngưỡng đã ký chưa đạt: pass_rate, pass_k, wrongful_refund_vnd, wrongful_carrier_faults, roi.
 
 **Mở lại pre-mortem (Phiếu B mục B6), viết bằng bút khác màu.** Với thẻ S1, S3, S4, S5 đây là một phần của phần riêng theo thẻ.
 
-- Sự cố trên thẻ thuộc lăng kính nào (kỹ thuật, kinh doanh, con người và vận hành, pháp lý)? …
-- Có nằm trong các lý do bàn đã viết không? Nếu có: cổng vòng 1 đã đỡ được bao nhiêu (đọc cột prepared trong report)? Nếu không: vì sao cả bàn không nghĩ tới? …
+- Sự cố trên thẻ thuộc lăng kính nào (kỹ thuật, kinh doanh, con người và vận hành, pháp lý)? **Pháp lý** là chính (bên thứ ba MKD bị phạt 120.000đ/lỗi oan, trái phụ lục đã ký hiệu lực 01/12); gốc rễ ở **kỹ thuật** (concept drift: quy tắc nghiệp vụ đổi sang REFUND-v4 mà trợ lý vẫn chọn chính sách theo cờ `index_active` của v3); thêm **kinh doanh** (hoàn sai 900.000đ, hoàn thiếu 667.000đ, ROI −2,59) và **con người và vận hành** (MKD nhận liền nhiều lỗi trong một ngày "không thấy ai bên LogiX xác nhận": không có người duyệt từ lỗi thứ 3).
+- Có nằm trong các lý do bàn đã viết không? **Có một phần.** HAZOP vòng 1 (Phiếu B mục B4) đã viết dòng `delay_cause` × chính sách · INVALID (REFUND-v4 ngày 2026-12-01 bỏ `FORCE_MAJEURE`, đơn MKD bị ghi lỗi oan) và dòng `delay_cause` · INCOMPLETE (tracking trống nguyên nhân); pre-mortem B6 lăng kính pháp lý có lý do "hãng bị ghi lỗi không có căn cứ trong tracking". Cổng vòng 1 đỡ được **20/35 lỗi oan** (57%). **Chưa nghĩ tới:** (1) v4 cũng đổi **số tiền** (hoàn từ trễ 2 ngày, thưởng từ 5 ngày) và **hạn mức tự động** (200.000đ → 100.000đ), trong khi cổng 1 chỉ chặn hoàn **quá** mức, không bắt hoàn **thiếu** và không kiểm hạn mức; (2) trần **2 lỗi/hãng/ngày** trong `ops_limits` không có cổng nào giữ. Lý do bàn không nghĩ tới: pre-mortem tập trung vào chiều "LogiX mất tiền", bỏ qua chiều "khách bị trả thiếu"; và coi `ops_limits` là con số đã thống nhất nên mặc định có người giữ.
 - Lý do còn thiếu, thêm bây giờ:
 
 | Lý do thất bại (viết ở thì quá khứ) | Lăng kính | Kiểm được bằng gì (trace / data / config nào) |
 |---|---|---|
-| | | |
+| Chính sách mới hạ ngưỡng hoàn phí xuống 2 ngày và tăng thưởng, nhưng trợ lý vẫn tính theo bản cũ; khách trễ 2 ngày bị từ chối, khách trễ lâu bị trả thiếu, CSKH bị khiếu nại hàng loạt | Kỹ thuật + kinh doanh | S3-02, S3-03, S3-05 (`under_refund_vnd` 667.000đ); sự kiện `policy` trên trace; `policies[].effective_from` so với `index_active` |
+| Chính sách mới hạ hạn mức tự động xuống 100.000đ, trợ lý vẫn tự hoàn khoản lớn không qua người duyệt | Kinh doanh + con người và vận hành | S3-04 (hoàn sai 900.000đ, tỉ lệ chuyển người 0,0); `policies[REFUND-v4].auto_limit_vnd` |
+| Một hãng bị ghi liền 3–4 lỗi trong một ngày mà không ai xác nhận; hãng nhỏ chạm ngưỡng đình chỉ chỉ sau một ngày bão | Con người và vận hành + pháp lý | S3-42, S3-43 (10 lỗi oan cho MKD); `ops_limits.max_auto_strikes_per_carrier_per_day = 2`; `carriers[].suspend_after_strikes_7d` |
 
 ---
 
