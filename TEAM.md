@@ -52,17 +52,30 @@ Mỗi thành viên tự viết một mục bên dưới (chép mẫu, đổi ti�
   - Soạn thảo toàn bộ Bản tiêu chí chấp nhận tại Câu 1.6 (Phiếu A, mục A4) gồm bảng câu tiêu chí "Nếu ... thì ...", các câu ranh giới đầu ra, 4 câu hỏi soát và xác lập thời hạn xem lại tiêu chí.
   - Thiết lập các ngưỡng bắt buộc, ngưỡng kinh doanh vận hành (`business_ops`), điều kiện dừng và 4 quy tắc quyết định `decision_rule` trong `config/acceptance_criteria.json`.
   - Thực hiện lệnh ký `python -m lab10.criteria sign`, sinh mã niêm phong hash SHA-256 trong `config/acceptance_criteria.lock`.
+- Hoàn thành Checkpoint 3 (Khối 2):
+  - Viết Bản đồ dữ liệu & kịch bản Data Drift trong 3 tháng tại Câu 2.3 (Phiếu B, mục B3).
+  - Điền các con số kinh doanh tại Câu 2.9 (Phiếu B, mục B7.4) và cấu hình `config/operating_gates.json` (mục `business`: ngân sách ticket 1.500đ, trần hoàn tự động 2.000.000đ/ngày, ROI tối thiểu 0.30).
+  - Tham gia Pre-mortem lăng kính kinh doanh tại Câu 2.5 (Phiếu B, mục B6) và đồng thuận Quyết định v1 tại Mục B8.
+- Hoàn thành Checkpoint 4 & 5 (Khối 3 & Chốt Gate 1):
+  - Soạn thảo Specification định lượng tại Câu 3.2 (Phiếu C, mục C5) ràng buộc phiên bản hiệu lực theo ngày (`effective_from <= as_of <= effective_to`) và trần phạt đối tác 2 lỗi/hãng/ngày.
+  - Tham gia xây dựng Fault Tree trước sửa (Câu 3.4, mục C6) và sau sửa (Câu 3.7, mục C9) cùng cả bàn.
+  - Rà soát các chỉ số kinh doanh tại mốc after: ROI đạt 1.51 (> 0.30 đã ký), chi phí mỗi ticket 3.980đ (< 7.000đ), độ phủ pilot đạt 100%.
+  - Thống nhất Quyết định Gate 1 v2 là "Tiếp tục" tại Mục C12 và hoàn thiện 3 dòng bắt buộc cho gói nộp bài.
 
 ### Bằng chứng
 
 - Commit ký tiêu chí bắt buộc: `015490a` ("Sign acceptance criteria").
-- Mã niêm phong hash SHA-256: `7d12c9c2d2dd7245217d35d8733c39b1bd77da70603750ed19ad865f6c6a44fa` trong `config/acceptance_criteria.lock`.
-- Nội dung đã điền tại Phiếu A: Câu 1.1 (dòng 21–24) và Câu 1.6 (dòng 82–132) trong `templates/form-a-criteria.md`.
+- Mã niêm phong hash SHA-256 tiêu chí: `7d12c9c2d2dd7245217d35d8733c39b1bd77da70603750ed19ad865f6c6a44fa`.
+- Hash chốt cổng vòng 1: `69a3da71`.
+- Báo cáo tự kiểm tra thẻ sự cố S3: `R-S3-grade-20261119-172718-690ce3` (PASS-VISIBLE: 6/6 check đạt ✅).
+- Các mốc chạy: Base `R-S3-before-20261119-172718-690ce3`, Prepared `R-S3-prepared-20261119-172719-690ce3`, After `R-S3-after-20261119-172719-690ce3`.
+- Bằng chứng trong phiếu: Phiếu A (A1, A4); Phiếu B (B3, B6, B7.4, B8); Phiếu C (C5, C6, C7, C9, C12).
+- Commit hoàn tất bài nộp: `dcd8a93` ("chore: sync submission package after final grade").
 
 ### Exit ticket
 
-- **Một điều học được:** Bản tiêu chí chấp nhận phải được ký và khóa bằng mã hash trước khi nhìn thấy số liệu đo đạc thực tế để đảm bảo tính khách quan (đặt luật trước, xem số sau).
-- **Một điều còn chưa chắc:** Cách cân đối giữa việc hạ trần hoàn tiền để tránh rủi ro tài chính với việc giữ cho tỷ lệ ca phải chuyển người duyệt (escalation rate) không bị quá tải.
+- **Một điều học được:** Quy tắc nghiệp vụ đổi đời thực (Concept Drift) nếu không có cơ chế ghim kiểm tra theo ngày hiệu lực thì cờ database cũ sẽ làm hệ thống AI tự động hóa vi phạm pháp lý và tài chính hàng loạt.
+- **Một điều còn chưa chắc:** Trong môi trường sản xuất thực tế khi xảy ra thiên tai kéo dài qua nhiều tuần, cần cơ chế tự động điều phối ngưỡng lỗi tuần (5 lỗi/7 ngày) như thế nào để vừa bảo vệ đối tác vừa không để lọt lỗi vận hành nghiêm trọng.
 
 ## DangThuyDung-2A202604116
 
