@@ -31,7 +31,7 @@ Mọi con số trong quyết định Gate 1 phải trỏ về một dòng ở đ
 |---|---|---|---|---|---|---|---|---|
 | 1 | `R-base-before-20261119-154112-bde05c` | base · base | (baseline, chưa có cổng) | 0,9909 [0,9727; 1,0] (109/110) | 0,9545 (21/22) | 20.000 · 1 · 0 | 0,2273 | Chất lượng chung đạt nhưng trượt 2 ngưỡng an toàn bắt buộc, cả hai do một lần chạy `T-002@55` (kho HCM, hãng VNX), nên chưa đủ căn cứ Tiếp tục. |
 | 2 | `R-base-after-20261119-155814-c54894` | base · after | (cổng vòng 1, thử trước khi chốt) Thêm 2 cổng `write_gate`: hoàn tối đa theo tracking + chính sách; chỉ ghi lỗi hãng khi `carrier_at_fault` theo tracking | 1,0 [1,0; 1,0] (110/110) | 1,0 (22/22) | 0 · 0 · 0 | 0,2273 | Hai cổng sửa đúng `T-002@55`, không làm hỏng ca nào và không tăng tỉ lệ chuyển người; mọi ngưỡng đã ký đều đạt trên bộ nền. |
-| 3 | | base · prepared | (cổng vòng 1 đã chốt) | | | | | |
+| 3 | `R-base-prepared-20261119-163205-7f05d4` | base · prepared | (cổng vòng 1 đã chốt, checkpoint `69a3da71`) So với dòng 2: thêm config `operations`, `legal` (chặn `customer_note`, `recipient_contact`; lỗi hãng phải có nguyên nhân) và `business` (trần hoàn 2.000.000đ/ngày, ngân sách 1.500đ/ticket, ROI ≥ 0,3) | 1,0 [1,0; 1,0] (110/110) | 1,0 (22/22) | 0 · 0 · 0 | 0,2273 | Cả 9 dòng `gate` đều ĐẠT (chi phí 4.202đ/ticket, ROI 1,38, 0 ca ùn, không vượt trần); config mới không làm hỏng ca nào và không tăng tỉ lệ chuyển người. |
 | 4 | | | | | | | | |
 
 ---
