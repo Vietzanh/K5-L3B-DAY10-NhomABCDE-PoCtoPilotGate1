@@ -47,13 +47,17 @@ Mỗi thành viên tự viết một mục bên dưới (chép mẫu, đổi ti�
 ### Đóng góp cụ thể
 
 - Hoàn thành Checkpoint 1: Xác nhận vai trò trong bàn, thiết lập mục cá nhân trong `TEAM.md`.
-- Rà soát các tài liệu đầu vào: `data/world.json` (mục `ops_facts`, `ops_limits`), file mẫu `config/acceptance_criteria.example.json`.
-- Chuẩn bị tài liệu đối chiếu PRD v1.1 (§2, §3, §6) và Eval Card từ Lab 9 để sẵn sàng cho Checkpoint 2 (soạn thảo và ký tiêu chí nghiệm thu).
+- Hoàn thành Checkpoint 2 (Khối 1):
+  - Viết mục tiêu cấp hệ thống tại Câu 1.1 (Phiếu A, mục A1) dựa trên PRD v1.1 §3.
+  - Soạn thảo toàn bộ Bản tiêu chí chấp nhận tại Câu 1.6 (Phiếu A, mục A4) gồm bảng câu tiêu chí "Nếu ... thì ...", các câu ranh giới đầu ra, 4 câu hỏi soát và xác lập thời hạn xem lại tiêu chí.
+  - Thiết lập các ngưỡng bắt buộc, ngưỡng kinh doanh vận hành (`business_ops`), điều kiện dừng và 4 quy tắc quyết định `decision_rule` trong `config/acceptance_criteria.json`.
+  - Thực hiện lệnh ký `python -m lab10.criteria sign`, sinh mã niêm phong hash SHA-256 trong `config/acceptance_criteria.lock`.
 
 ### Bằng chứng
 
-- Thiết lập mục cá nhân trong `TEAM.md`.
-- Sẵn sàng các tài liệu chuẩn bị cho Khối 1 và commit ký tiêu chí tiếp theo.
+- Commit ký tiêu chí bắt buộc: `084d4f3` ("Sign acceptance criteria").
+- Mã niêm phong hash SHA-256: `7d12c9c2d2dd7245217d35d8733c39b1bd77da70603750ed19ad865f6c6a44fa` trong `config/acceptance_criteria.lock`.
+- Nội dung đã điền tại Phiếu A: Câu 1.1 (dòng 21–24) và Câu 1.6 (dòng 82–132) trong `templates/form-a-criteria.md`.
 
 ### Exit ticket
 
