@@ -24,6 +24,42 @@ Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, k
 
 Mỗi thành viên tự viết một mục bên dưới (chép mẫu, đổi tiêu đề thành họ tên không dấu và MSSV, ví dụ `## NguyenVanAn-20241234`).
 
+## TruongVanHai-2A202604018
+
+### Phần việc phụ trách
+
+- **Vai trò:** Sản phẩm & Kinh doanh (Product & Business)
+- **Nhiệm vụ chính:**
+  - **Khối 1 (Phiếu A):** 
+    - Câu 1.1 (Mục tiêu hệ thống theo PRD v1.1 §3).
+    - Câu 1.6 (Bản tiêu chí chấp nhận "Nếu ... thì ...", soát ranh giới đầu ra).
+    - File cấu hình: `config/acceptance_criteria.json` (ngưỡng pass rate, pass^k, trần hoàn sai, lỗi hãng, PII, chi phí, ROI, điều kiện dừng, quy tắc quyết định `decision_rule`).
+  - **Khối 2 (Phiếu B):** 
+    - Câu 2.3 (Bản đồ dữ liệu & kịch bản Data Drift trong 3 tháng).
+    - Câu 2.9 (Cổng kinh doanh trong `config/operating_gates.json` mục `business`: trần tiền hoàn ngày, ngân sách ticket, phạm vi pilot, ROI).
+    - Câu 2.5 (Tham gia Pre-mortem lăng kính kinh doanh) & B8 (Chốt Quyết định v1).
+  - **Khối 3 (Phiếu C):** 
+    - Câu 3.2 (Specification ngăn chặn tác hại của thẻ sự cố).
+    - Câu 3.5 (Điều chỉnh cổng kinh doanh trong `config/operating_gates.json`).
+    - Câu 3.4 & 3.7 (Tham gia Fault Tree).
+    - Câu 3.8 / C12 (Đồng thuận Quyết định v2 và 3 dòng bắt buộc).
+
+### Đóng góp cụ thể
+
+- Hoàn thành Checkpoint 1: Xác nhận vai trò trong bàn, thiết lập mục cá nhân trong `TEAM.md`.
+- Rà soát các tài liệu đầu vào: `data/world.json` (mục `ops_facts`, `ops_limits`), file mẫu `config/acceptance_criteria.example.json`.
+- Chuẩn bị tài liệu đối chiếu PRD v1.1 (§2, §3, §6) và Eval Card từ Lab 9 để sẵn sàng cho Checkpoint 2 (soạn thảo và ký tiêu chí nghiệm thu).
+
+### Bằng chứng
+
+- Thiết lập mục cá nhân trong `TEAM.md`.
+- Sẵn sàng các tài liệu chuẩn bị cho Khối 1 và commit ký tiêu chí tiếp theo.
+
+### Exit ticket
+
+- **Một điều học được:** Bản tiêu chí chấp nhận phải được ký và khóa bằng mã hash trước khi nhìn thấy số liệu đo đạc thực tế để đảm bảo tính khách quan (đặt luật trước, xem số sau).
+- **Một điều còn chưa chắc:** Cách cân đối giữa việc hạ trần hoàn tiền để tránh rủi ro tài chính với việc giữ cho tỷ lệ ca phải chuyển người duyệt (escalation rate) không bị quá tải.
+
 ## HoVaTen-MSSV
 
 ### Phần việc phụ trách
