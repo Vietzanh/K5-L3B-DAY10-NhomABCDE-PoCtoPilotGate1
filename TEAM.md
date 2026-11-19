@@ -135,20 +135,31 @@ Mỗi thành viên tự viết một mục bên dưới (chép mẫu, đổi ti�
 - **Một điều học được:** Lỗi nguy hiểm nhất của một trợ lý có quyền ghi sổ là lỗi chìm: ở `T-002@55` và `S3-04` khách hài lòng, trợ lý báo `refunded`, không có cảnh báo nào, người chịu là LogiX và hãng vận chuyển. Vì vậy cổng phải đối chiếu với nguồn sự thật (tracking, chính sách theo ngày hiệu lực) chứ không tin số model đưa ra, và monitor phải đếm sự kiện của cổng chứ không chờ ai phàn nàn.
 - **Một điều còn chưa chắc:** Hai monitor của mình chỉ sáng đèn khi cổng đã chặn hoặc ghim được. Nếu sự cố xảy ra ở chỗ chưa có cổng (ví dụ ngày hiệu lực gõ sai ngay trong bảng chính sách, hay lỗi hãng dồn qua nhiều ngày) thì chúng vẫn đọc 0. Mình chưa chắc nên đo trực tiếp hành vi của trợ lý thế nào để bắt được loại lỗi chưa ai lường trước.
 
-## HoVaTen-MSSV
+## TranVietAnh-2A202604029
 
 ### Phần việc phụ trách
 
-Vai trong bàn; câu nào của đề, mục nào của phiếu A/B/C, file nào (`lab10/guards.py`, `config/operating_gates.json`, …).
+- **Vai trò:** Vận hành và pháp lý; trưởng nhóm (tạo repo, PRD v1.1 và eval card từ Lab 9, máy gom bài nộp cuối).
+- **File chính:** `config/operating_gates.json` (mục `operations`, `legal`), `submission/submission.json`; phần vòng 2 có thêm `lab10/guards.py` (cổng 4), `lab10/monitors.py` (`policy_index_mismatch_rate`, `carrier_fault_needs_review_rate`).
+- **Phiếu:** A câu 1.2, 1.4 (mục A1, A2) · B câu 2.4 (B4 HAZOP vòng 1, B5 checklist 9 nhóm), câu 2.5 (B6 pre-mortem, lăng kính con người – vận hành và pháp lý), câu 2.10 (B7.5 runbook 1–3, B7.6 giờ cao điểm) · C mục C1, C3.5, C4, câu 3.3 (C5), C6, C9, C10, C11 (checklist, runbook 4–5), C12 cùng cả bàn.
 
 ### Đóng góp cụ thể
 
-...
+- **Câu 1.2, 1.4:** mục tiêu nhìn từ chị Oanh (đối soát 100% khoản hoàn và lỗi hãng khớp sổ, có nguyên nhân trong tracking) và chị Hạnh (không vượt 6 ca/giờ/người, không ca nào chờ quá 60 phút); telemetry production cho `file_carrier_fault` đo tỉ lệ lỗi ghi cho hãng bị đảo lại, có ngưỡng vàng/đỏ khớp `stop_condition` đã ký.
+- **Câu 2.4 · HAZOP vòng 1** trên `file_carrier_fault`: 5 dòng kỹ thuật (có nhánh chưa thấy trên trace: đơn nhiều kiện O-1013 bị ghi lỗi cho hãng của kiện đầu) và 4 dòng ngoài kỹ thuật (người duyệt quá tải, người duyệt không đứng tên, tên + SĐT người nhận quà gửi sang hãng, chưa có trần tiền hoàn). Dòng INVALID "REFUND-v4 từ 01/12 bỏ bất khả kháng" là đúng nguyên nhân của thẻ S3 sau này. **Checklist 9 nhóm** có PIC tên thật từng dòng.
+- **Câu 2.10 · cổng vận hành và pháp lý:** PIC NV-TUNG, người duyệt NV-HANH, 1 người trực, 6 ca/giờ, chờ tối đa 60 phút, 4 điều kiện dừng chép đúng `stop_condition` đã ký, kênh `#logix-refund-pilot`; `legal.pii_fields_blocked_to_third_party = ["customer_note", "recipient_contact"]` (chọn đúng khoá trong payload gửi hãng, kiểm bằng `--adhoc` đơn quà O-1026: `legal_gate` bỏ cả hai trường) và `carrier_fault_requires_recorded_cause = true`. Runbook 1–3 và giờ cao điểm khớp các con số đó. Cổng `legal` này đỡ 20/35 lỗi oan của thẻ S3 ở mốc prepared.
+- **Giữ tính toàn vẹn của bài:** sửa mã commit ký, hash chốt và mã lần chạy ghi sai ở B8, A5; phát hiện `integrity ❌` / `criteria ❌` giả do Git đổi xuống dòng CRLF, đặt `core.autocrlf=false` và chạy lại `grade` hợp lệ (`R-S3-grade-20261119-165535-97c54a`).
+- **Vòng 2, thẻ S3:** cổng 4 trong `write_gate` (khoản vượt hạn mức tự động của chính sách hiệu lực phải có phê duyệt hợp lệ: đúng đơn, `valid`, chưa hết hạn, đủ `max_vnd`), hai monitor `policy_index_mismatch_rate` và `carrier_fault_needs_review_rate`, hai điều kiện dừng mới trong config; điền C1, C2 (lỗi 2, 3), C3.5, C4, C5, C6, C9, C10 (2 dòng risk register), C11 (checklist, runbook 4–5), C12 và `submission.json`.
+- **Gộp bài của bàn:** giải quyết xung đột khi cả bàn cùng sửa `guards.py`, `monitors.py` và Phiếu C (giữ cổng 5 của Dung, giữ cả 4 monitor có 2 của Vinh); gom lại `submission/` sau khi bài bị ghi đè từ máy CRLF. Lệnh 7 cuối: **ĐỦ THÀNH PHẦN**.
 
 ### Bằng chứng
 
-Mã commit, mã lần chạy (`runs/<mã>`), dòng trong phiếu.
+- **Commit:** `1919c57` (câu 1.2, 1.4) · `17fa71e` (B4, B5, B6, B7.5, B7.6, config `operations` + `legal`) · `bd4b070` (cập nhật B5) · `0720a34` (sửa mã ở B8, A5) · `d0103fe` (Phiếu C: thẻ S3, C0, C1) · `aa19f97` (cổng 4, 2 monitor, điều kiện dừng) · `ac91ca6` (C2–C11) · `474ecb2`, `77051cc` (gộp với Dung, Vinh) · `0919b6e`, `3b3e683`, `77142e3` (C12, `submission.json`, gom bài).
+- **Mã lần chạy:** `R-base-after-20261119-160839-f2b9f3` (config `operations` + `legal`, bộ nền 110/110) · S3 prepared `R-S3-prepared-20261119-165536-97c54a` · grade cuối `R-S3-grade-20261119-171314-78ef31` (PASS-VISIBLE; S3 after 60/60, hoàn sai 0, hoàn thiếu 0, lỗi oan 0, ROI 1,51; bộ nền `R-base-after-20261119-171313-78ef31` 110/110).
+- **Trong phiếu:** Phiếu A mục A1 (câu 1.2), A2 (cột telemetry); Phiếu B mục B4, B5, B6, B7.5, B7.6; Phiếu C mục C1, C2 (lỗi 2, 3), C3.5, C4, C5 (câu 3.3), C6, C9, C10, C11, C12.
+- **Dùng AI:** dùng Claude (Claude Code) để đọc đề và code lab, soạn nháp các ô phiếu, viết cổng 4 và hai monitor, chạy `eval` / `trace` / `grade`, giải quyết xung đột Git và gom bài. Các con số (ngưỡng, SLA, người đứng tên, trường dữ liệu bị chặn) và quyết định đã được đối chiếu lại với `data/world.json`, tiêu chí đã ký và report trước khi giữ.
 
 ### Exit ticket
 
-Một điều học được, một điều còn chưa chắc.
+- **Một điều học được:** Phần lớn tác hại của thẻ S3 không cần sửa model mà nằm ở con số và con người quanh nó: một cờ "đang dùng" không ai đứng tên cập nhật, một trần 2 lỗi/hãng/ngày đã thống nhất nhưng không ai giữ. Cổng `legal` đặt ở vòng 1 bằng một dòng config đã đỡ được hơn nửa số lỗi oan trước khi bàn biết sự cố. Viết runbook với tên người và số phút cụ thể buộc mình nhận ra chỗ nào chưa có ai chịu trách nhiệm.
+- **Một điều còn chưa chắc:** Mình chưa chắc quy trình người sẽ chạy được ngoài đời như trên giấy: SLA 60 phút để NV-HANH xác nhận lỗi hãng bị giữ và duyệt khoản vượt hạn mức mới chỉ thử với 1 ca/ngày trên dữ liệu mock. Trong một tuần bão thật, khi nhiều hãng cùng chạm trần và nhiều khoản vượt 100.000đ dồn về một người trực, mình chưa biết hàng chờ có vượt SLA không và nên gọi thêm người hay thu hẹp phạm vi trước.
