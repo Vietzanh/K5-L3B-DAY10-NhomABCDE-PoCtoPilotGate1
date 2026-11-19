@@ -438,20 +438,20 @@ bao nhiêu thời gian? (3) Có phần nào của dự án không nên làm ti�
 
 | | **v1** (phút 105–115, TRƯỚC khi nhận thẻ sự cố) |
 |---|---|
-| Commit ký tiêu chí (message `Sign acceptance criteria`; hash commit, tuỳ chọn) | `084d4f3` |
-| Hash chốt cổng vòng 1 (8 ký tự lệnh `lab10.checkpoint` in ra, tuỳ chọn) | `a122466b` |
-| Mã lần chạy dùng làm bằng chứng | bộ nền, mốc base: `R-base-before-20261119-160738-86c91b` · bộ nền với cổng vòng 1 (prepared): `R-base-prepared-20261119-162904-0bb541` |
+| Commit ký tiêu chí (message `Sign acceptance criteria`; hash commit, tuỳ chọn) | `015490a` |
+| Hash chốt cổng vòng 1 (8 ký tự lệnh `lab10.checkpoint` in ra, tuỳ chọn) | `69a3da71` |
+| Mã lần chạy dùng làm bằng chứng | bộ nền, mốc base: `R-base-before-20261119-154112-bde05c` · bộ nền với cổng vòng 1 (prepared): `R-base-prepared-20261119-163205-7f05d4` |
 | Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | Không (vượt trần: không; chi phí 4.202đ ≤ 7.000đ; ROI 1,38 ≥ 0,3; tổng hoàn tự động 155.000đ ≤ 2.000.000đ; hàng chờ 0 ca ùn, chờ lâu nhất 0.0 phút). |
 | Kho hoặc hãng có số xấu nhất: Phân khúc "?" (không mã đơn) / Kho HCM. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Đọc khối "theo kho và hãng" ở cuối output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | Phân khúc "?" (ticket không có mã đơn): chi phí 10.359đ/ticket (cao hơn làm tay 10.000đ do chuyển thẳng người duyệt). Tuy nhiên phân khúc này chỉ chiếm 5/110 lần chạy và đều được chuyển duyệt an toàn, không có lỗi hoàn sai hay lỗi hãng, nên không làm đổi quyết định Tiếp tục. |
 | Quyết định (khoanh một) | **Tiếp tục** |
-| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | `R-base-prepared-20261119-162904-0bb541`: Cả 5 chỉ số bắt buộc đều ĐẠT (pass_rate 1,0 ≥ 0,9; pass_k 1,0 ≥ 0,85; wrongful_refund_vnd = 0đ ≤ 0; wrongful_carrier_faults = 0 ≤ 0; pii_leaks = 0 ≤ 0). |
-| Bằng chứng 2 | `R-base-prepared-20261119-162904-0bb541`: Chi phí mỗi ticket 4.202đ (rẻ hơn 58% so với làm tay 10.000đ), tiết kiệm ròng 127.562đ/ngày, ROI đạt 1,38 (138% ≥ ngưỡng 0,30 đã ký). |
-| Bằng chứng 3 | `R-base-prepared-20261119-162904-0bb541`: Vận hành an toàn, hàng chờ 0 ca bị ùn, thời gian chờ tối đa 0 phút (SLA 60 phút), tổng tiền hoàn 155.000đ nằm an toàn trong ngân sách 2.000.000đ/ngày. |
+| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | `R-base-prepared-20261119-163205-7f05d4`: Cả 5 chỉ số bắt buộc đều ĐẠT (pass_rate 1,0 ≥ 0,9; pass_k 1,0 ≥ 0,85; wrongful_refund_vnd = 0đ ≤ 0; wrongful_carrier_faults = 0 ≤ 0; pii_leaks = 0 ≤ 0). |
+| Bằng chứng 2 | `R-base-prepared-20261119-163205-7f05d4`: Chi phí mỗi ticket 4.202đ (rẻ hơn 58% so với làm tay 10.000đ), tiết kiệm ròng 127.562đ/ngày, ROI đạt 1,38 (138% ≥ ngưỡng 0,30 đã ký). |
+| Bằng chứng 3 | `R-base-prepared-20261119-163205-7f05d4`: Vận hành an toàn, hàng chờ 0 ca bị ùn, thời gian chờ tối đa 0 phút (SLA 60 phút), tổng tiền hoàn 155.000đ nằm an toàn trong ngân sách 2.000.000đ/ngày. |
 | Khớp dòng nào trong `decision_rule` đã ký? | Khớp dòng **Tiếp tục**: "Đạt 100% các ngưỡng an toàn (wrongful_refund_vnd_max = 0, wrongful_carrier_faults_max = 0, pii_leaks_max = 0), pass_rate >= 0.90, pass_k >= 0.85 trên cả bộ nền và bộ sự cố, đồng thời không vi phạm trần ngân sách và SLA vận hành." |
 | Nếu Thu hẹp: cắt phần nào, vì sao | Không áp dụng (vì đã đạt 100% các chỉ số an toàn và chất lượng bắt buộc). |
 | Nếu Cải tiến thêm: giả thuyết cụ thể + hạn | Không áp dụng (2 cổng phòng ngừa vòng 1 đã khắc phục triệt để lỗi T-002@55). |
 | Nếu Dừng: bài học ghi lại | Không áp dụng. |
-| Một bằng chứng còn thiếu (thứ bộ nền chưa đo được) | Phản hồi thực tế và sự hài lòng của khách hàng cũng như tỷ lệ khiếu nại đối soát thực tế từ các hãng vận chuyển (do môi trường lab dùng MockLLM và dữ liệu tĩnh). |
+| Một bằng chứng còn thiếu (thứ bộ nền chưa đo được) | (1) Chưa đo trên **bộ sự cố**: dòng `decision_rule` "Tiếp tục" đã ký yêu cầu đạt ngưỡng "trên cả bộ nền và bộ sự cố"; v1 chỉ dựa trên bộ nền (22 ticket × 5 seed), nên Tiếp tục ở v1 là có điều kiện và sẽ xét lại ở v2 sau khi chạy `python -m lab10.grade --incident <thẻ>`. (2) Phản hồi thực tế và sự hài lòng của khách hàng cũng như tỷ lệ khiếu nại đối soát thực tế từ các hãng vận chuyển (do môi trường lab dùng MockLLM và dữ liệu tĩnh). |
 | Ngày quyết định lại (trừ khi Dừng) | 2026-11-26 (sau 1 tuần chạy pilot thử nghiệm tại 2 depot). |
 | PIC ký | Trương Văn Hải (Sản phẩm & Kinh doanh) & Trần Việt Anh (Lead Gate Engineer) |
 

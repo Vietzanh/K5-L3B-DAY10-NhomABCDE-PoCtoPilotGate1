@@ -55,7 +55,7 @@ Mỗi thành viên tự viết một mục bên dưới (chép mẫu, đổi ti�
 
 ### Bằng chứng
 
-- Commit ký tiêu chí bắt buộc: `084d4f3` ("Sign acceptance criteria").
+- Commit ký tiêu chí bắt buộc: `015490a` ("Sign acceptance criteria").
 - Mã niêm phong hash SHA-256: `7d12c9c2d2dd7245217d35d8733c39b1bd77da70603750ed19ad865f6c6a44fa` trong `config/acceptance_criteria.lock`.
 - Nội dung đã điền tại Phiếu A: Câu 1.1 (dòng 21–24) và Câu 1.6 (dòng 82–132) trong `templates/form-a-criteria.md`.
 
