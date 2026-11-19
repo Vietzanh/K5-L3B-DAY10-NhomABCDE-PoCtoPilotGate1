@@ -135,17 +135,16 @@ def write_gate(ctx, action):
             ctx.log("carrier_fault_blocked", parcel_id=parcel["parcel_id"], db_delay=delay,
                     cause=parcel.get("delay_cause"), claimed=action.get("delay_days"))
             return Verdict.deny(f"tracking: trễ {delay} ngày, nguyên nhân {parcel.get('delay_cause')} -> hãng không có lỗi")
-        # CỔNG 5 (vòng 2, thẻ S3) · trần số lỗi tự động cho một hãng mỗi ngày (ops_limits, đã thống nhất với Ops).
-        # Nguyên nhân: S3-42, S3-43 là lỗi thứ 3 và 4 của MKD trong cùng một ngày; quy định từ lỗi thứ 3 phải có người
-        # xác nhận, nhưng không có cổng nào giữ -> hãng "nhận liền mấy lỗi, không thấy ai bên LogiX xác nhận".
-        # Bỏ riêng lệnh ghi lỗi (khách vẫn được hoàn đúng); ca này vào danh sách người duyệt xác nhận lỗi hãng.
-        cap = ctx.tools.ops_limits().get("max_auto_strikes_per_carrier_per_day")
+        # CỔNG 5 (vòng 2, thẻ S3) · trần lỗi tự động cho MỘT hãng mỗi ngày (ops_limits, đã thống nhất với Ops/Finance).
+        # S3-42, S3-43 là lỗi thứ 3 và 4 của MKD trong cùng một ngày -> hãng "nhận liền mấy lỗi, không ai xác nhận".
+        # Từ lỗi thứ (trần + 1) phải có người xác nhận: không tự ghi, khoản hoàn cho khách vẫn giữ.
+        cap = (ctx.tools.ops_limits() or {}).get("max_auto_strikes_per_carrier_per_day")
+        carrier = action.get("carrier_id") or parcel.get("carrier_id")
         if cap is not None:
-            today = len(ctx.tools.fault_rows(carrier_id=action.get("carrier_id")))
+            today = len(ctx.tools.fault_rows(carrier_id=carrier))
             if today >= cap:
-                ctx.log("carrier_strike_cap", carrier_id=action.get("carrier_id"), today=today, cap=cap)
-                return Verdict.deny(f"hãng {action.get('carrier_id')} đã có {today} lỗi tự động hôm nay (trần {cap}): "
-                                    f"chờ người duyệt xác nhận")
+                ctx.log("carrier_strike_cap", carrier_id=carrier, today=today, cap=cap, parcel_id=parcel["parcel_id"])
+                return Verdict.deny(f"hãng {carrier} đã có {today} lỗi tự động hôm nay (trần {cap}): chờ người xác nhận")
         if action.get("delay_days") != delay:
             return Verdict.modify("ghi đúng số ngày trễ theo tracking", delay_days=delay)
 
