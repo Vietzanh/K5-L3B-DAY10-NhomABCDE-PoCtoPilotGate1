@@ -19,7 +19,27 @@ def escalation_rate(trials):
     return sum(t["status"] == "escalated" for t in trials) / max(1, len(trials))
 
 
+def policy_index_mismatch_rate(trials):
+    """Thẻ S3 (concept drift). Tỉ lệ ticket mà cờ index_active của bảng policies KHÁC chính sách hiệu lực theo ngày
+    (sự kiện `policy_pinned` do pre_guard ghi). Khác 0 nghĩa là quy tắc nghiệp vụ đã đổi mà bản sao "đang dùng" chưa
+    được cập nhật: cần người sửa cờ và rà lại mọi quyết định từ ngày chính sách mới hiệu lực. Không cần nhãn."""
+    hit = sum(any(e.get("type") == "guard" and e.get("kind") == "policy_pinned" for e in t["events"]) for t in trials)
+    return hit / max(1, len(trials))
+
+
+def carrier_fault_needs_review_rate(trials):
+    """Thẻ S3 (bên thứ ba). Tỉ lệ ticket có một lỗi hãng bị giữ lại chờ người xác nhận: vượt trần
+    max_auto_strikes_per_carrier_per_day, hoặc tracking không ghi nguyên nhân / nguyên nhân không thuộc lỗi hãng.
+    Tăng vọt trong một ngày = hãng đang bị dồn lỗi (ví dụ sau bão): NV-HANH xác nhận, NV-OANH báo hãng. Không cần nhãn."""
+    kinds = ("carrier_strike_cap", "carrier_fault_blocked")
+    hit = sum(any((e.get("type") == "guard" and e.get("kind") in kinds) or e.get("type") == "legal_gate"
+                  and e.get("gate") == "carrier_fault_requires_recorded_cause" for e in t["events"]) for t in trials)
+    return hit / max(1, len(trials))
+
+
 MONITORS = {
     "escalation_rate": escalation_rate,     # có sẵn; KHÔNG tính là metric mới của đội
+    "policy_index_mismatch_rate": policy_index_mismatch_rate,
+    "carrier_fault_needs_review_rate": carrier_fault_needs_review_rate,
 }
 STARTER_MONITORS = ("escalation_rate",)

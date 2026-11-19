@@ -88,7 +88,7 @@ người chịu hại thường là bên thứ ba). Định nghĩa đầy đủ 
 
 | # | Lỗi: người ta thấy gì (dán dòng trace / sổ cái) | Ai gặp, ai chịu | Hệ trọng (thấp / cao) | Loại lỗi (giới hạn hệ thống / ngữ cảnh / chìm) |
 |---|---|---|---|---|
-| 1 | | | | |
+| 1 | **Từ chối oan khách trễ 2 ngày vì áp chính sách cũ.** `S3-02@11` (prepared): `02 tracking {"db_delay_days": 2, "cause": "CARRIER"}` → `03 policy {"policy_id": "REFUND-v3", "pinned": false}` → `04 proposal {"amount_vnd": 0, "do_fault": false}` → `05 send_reply "Rất tiếc, theo chính sách hiện hành đơn chưa đủ điều kiện hoàn tiền."` → `denied`. Nhãn: `refunded` 18.000đ, lỗi `[GHSH, O-2302-P1]`. `as_of` = 02/12/2026 nên REFUND-v4 (từ 01/12, `min_days_fee: 2`) mới là bản hiệu lực, nhưng `index_active` vẫn bật cho v3 (`min_days_fee: 3`). Cùng nguồn: `S3-03`, `S3-05` hoàn thiếu 50.000đ, 40.000đ (cả 5 seed). | Khách C-01 gặp: bị từ chối 18.000đ dù thông báo chính sách mới nói từ 2 ngày là được hoàn (CSKH ghi nhận trên thẻ). Kế toán NV-OANH chịu sổ lệch: hãng GHSH có lỗi thật nhưng không bị ghi. | Cao: sai mọi ticket sau ngày đổi chính sách, lặp 5/5 seed; mốc prepared hoàn thiếu tổng 667.000đ trên gói S3. | **Lỗi ngữ cảnh** (do drift quy tắc): hệ thống chạy đúng thiết kế (đọc cờ `index_active`) nhưng khách thấy sai vì trái với thông báo chính sách mới. |
 | 2 | | | | |
 | 3 | | | | |
 
@@ -96,19 +96,19 @@ người chịu hại thường là bên thứ ba). Định nghĩa đầy đủ 
 
 | Câu hỏi | Lỗi 1 | Lỗi 2 | Lỗi 3 |
 |---|---|---|---|
-| **Đầu vào:** hệ thống có tự diễn giải / sửa đầu vào của người dùng theo cách họ không lường? Có đặt sai trọng số cho một lời nói hay tín hiệu của người dùng? | | | |
-| **Độ liên quan:** hệ thống có thiếu dữ liệu cần để quyết đúng? Dữ liệu vào có nhiễu, thiếu ổn định? | | | |
-| **Thứ bậc hệ thống:** có hai hệ thống cùng ghi / cùng theo dõi một thứ mà không rõ bên nào là chủ (ví dụ CSKH hoàn tay và trợ lý cùng ghi sổ)? | | | |
-| **Trạng thái hỏng:** nhiều lỗi cộng lại có làm tính năng không dùng được (ví dụ LLM lỗi liên tiếp)? | | | |
+| **Đầu vào:** hệ thống có tự diễn giải / sửa đầu vào của người dùng theo cách họ không lường? Có đặt sai trọng số cho một lời nói hay tín hiệu của người dùng? | Không: chữ khách không bị diễn giải sai (`claimed_delay_days: null`, `trust_claim: false`); số ngày lấy từ tracking. | | |
+| **Độ liên quan:** hệ thống có thiếu dữ liệu cần để quyết đúng? Dữ liệu vào có nhiễu, thiếu ổn định? | Không: tracking và bảng `policies` có đủ dữ liệu (v4 có `effective_from: 2026-12-01`); hệ thống có số đúng nhưng đọc sai trường. | | |
+| **Thứ bậc hệ thống:** có hai hệ thống cùng ghi / cùng theo dõi một thứ mà không rõ bên nào là chủ (ví dụ CSKH hoàn tay và trợ lý cùng ghi sổ)? | ✅ Có hai nơi cùng nói "phiên bản nào đang hiệu lực": `effective_from/effective_to` (nguồn sự thật) và cờ `index_active` (bản sao, chưa ai cập nhật khi v4 có hiệu lực). Trợ lý tin bản sao (`lab10/agent.py`: `next(p for p in policies if p.get("index_active"))`). | | |
+| **Trạng thái hỏng:** nhiều lỗi cộng lại có làm tính năng không dùng được (ví dụ LLM lỗi liên tiếp)? | Không: không có `llm_error` hay fallback; sai từ một bước chọn chính sách. | | |
 
 ### Phần 3 · Hướng xử lý (mỗi lỗi một ô)
 
 | | Lỗi 1 | Lỗi 2 | Lỗi 3 |
 |---|---|---|---|
-| Vì sao người gặp coi đây là lỗi | | | |
-| Kiểu giải pháp: phản hồi cho người dùng / trao quyền kiểm soát cho người / khác | | | |
-| Đường đi của người sau khi có giải pháp (ví dụ: ticket chuyển sang người duyệt → duyệt → khách được trả lời) | | | |
-| Hệ thống học được gì (tín hiệu ghi lại để theo dõi: tên metric trong `monitors.py`) | | | |
+| Vì sao người gặp coi đây là lỗi | Khách và CSKH đọc thông báo REFUND-v4: trễ từ 2 ngày được hoàn phí; trợ lý vẫn trả lời "chưa đủ điều kiện". Kế toán thấy hãng có lỗi thật (`delay_cause: CARRIER`) mà không có dòng lỗi. | | |
+| Kiểu giải pháp: phản hồi cho người dùng / trao quyền kiểm soát cho người / khác | Khác (cổng hệ thống ngoài model): `pre_guard` ghim phiên bản theo ngày hiệu lực bằng `Verdict.allow(policy_id=...)`, không tin cờ `index_active`; ghi sự kiện `policy_pinned` khi hai nguồn lệch nhau. | | |
+| Đường đi của người sau khi có giải pháp (ví dụ: ticket chuyển sang người duyệt → duyệt → khách được trả lời) | Ticket chạy với REFUND-v4 → hoàn 18.000đ tự động → ghi lỗi GHSH đúng 2 ngày, tin gửi hãng chỉ còn 4 trường → khách nhận "LogiX đã hoàn 18.000đ". Đã kiểm: `R-S3-after-20261119-165606-64db18`, `S3-02@11` ĐẠT. | | |
+| Hệ thống học được gì (tín hiệu ghi lại để theo dõi: tên metric trong `monitors.py`) | Metric `policy_index_mismatch_rate`: tỉ lệ trial có sự kiện `policy_pinned` (cờ `index_active` khác bản hiệu lực theo ngày). Khác 0 thì báo NV-TUNG cập nhật bảng chính sách. | | |
 
 Yêu cầu: ít nhất **hai lỗi có nguồn khác nhau** ở phần 2, và ít nhất một lỗi được xếp đúng là **lỗi chìm**.
 
