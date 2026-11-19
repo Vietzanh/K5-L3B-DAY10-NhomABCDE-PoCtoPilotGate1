@@ -104,6 +104,15 @@ def write_gate(ctx, action):
             ctx.log("carrier_fault_blocked", parcel_id=parcel["parcel_id"], db_delay=delay,
                     cause=parcel.get("delay_cause"), claimed=action.get("delay_days"))
             return Verdict.deny(f"tracking: trễ {delay} ngày, nguyên nhân {parcel.get('delay_cause')} -> hãng không có lỗi")
+        # Vòng 2 (thẻ S3): trần lỗi tự động cho MỘT hãng mỗi ngày (ops_limits, đã thống nhất với Ops/Finance).
+        # Từ lỗi thứ (trần + 1) phải có người xác nhận: không tự ghi, khoản hoàn cho khách vẫn giữ.
+        cap = (ctx.tools.ops_limits() or {}).get("max_auto_strikes_per_carrier_per_day")
+        carrier = action.get("carrier_id") or parcel.get("carrier_id")
+        if cap is not None:
+            today = len(ctx.tools.fault_rows(carrier_id=carrier))
+            if today >= cap:
+                ctx.log("carrier_strike_cap", carrier_id=carrier, today=today, cap=cap, parcel_id=parcel["parcel_id"])
+                return Verdict.deny(f"hãng {carrier} đã có {today} lỗi tự động hôm nay (trần {cap}): chờ người xác nhận")
         if action.get("delay_days") != delay:
             return Verdict.modify("ghi đúng số ngày trễ theo tracking", delay_days=delay)
 
