@@ -30,10 +30,10 @@ Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi một dòng vào `runs/jour
 
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
 |---|---|---|---|---|---|---|---|---|
-| 1 | | Sx · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt) | | | | | |
-| 2 | | Sx · after | | | | | | |
-| 3 | | Sx · after | | | | | | |
-| 4 | | base · after | (kiểm không regression) | | | | | |
+| 1 | `R-S3-prepared-20261119-163718-97c54a` (grade `R-S3-grade-20261119-163718-97c54a`; base cùng lượt `R-S3-before-20261119-163718-97c54a`) | S3 · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt `69a3da71`) | 0,5 [0,25; 0,75] (base 0,25 [0,0; 0,5]) | 0,5 (base 0,25) | 900.000 · 15 · 0 (base 900.000 · 35 · 0); hoàn thiếu 667.000đ; ROI −2,59 | 0,0 | Cổng vòng 1 chỉ đỡ được lỗi hãng oan (35 → 15); trượt pass_rate, pass_k, hoàn sai, lỗi oan và ROI, nên không đủ căn cứ Tiếp tục. *(Lần grade `R-S3-grade-20261119-163621-7f05d4` trước đó báo integrity ❌ giả do xuống dòng CRLF trên Windows, đã checkout lại LF, nội dung không đổi.)* |
+| 2 | `R-S3-after-20261119-165606-64db18` | S3 · after | `pre_guard` ghim chính sách theo ngày hiệu lực (`effective_from/to`), không theo cờ `index_active` | 0,8333 [0,5833; 1,0] | 0,8333 | 0 · 10 · 0; hoàn thiếu 0; ROI 1,51 | 0,0833 | Sửa gốc drift: hết hoàn sai và hoàn thiếu; còn 10 lỗi oan cho MKD ở `S3-42`, `S3-43` (nhánh khác). |
+| 3 | `R-S3-after-20261119-165948-f19d4a` (grade `R-S3-grade-20261119-170018-f19d4a`) | S3 · after | `write_gate` thêm trần lỗi tự động mỗi hãng mỗi ngày (`ops_limits.max_auto_strikes_per_carrier_per_day = 2`) | 1,0 [1,0; 1,0] | 1,0 | 0 · 0 · 0; hoàn thiếu 0; ROI 1,51 | 0,0833 | Gói S3 sạch 60/60, không còn vượt trần; grade: visible ✅, regression ✅, monitor ❌ (chưa có metric mới). |
+| 4 | `R-base-after-20261119-165949-f19d4a` | base · after | (kiểm không regression) sau cả hai thay đổi ở dòng 2–3 | 1,0 [1,0; 1,0] | 1,0 | 0 · 0 · 0 | 0,2273 | Bộ nền giữ 110/110, tỉ lệ chuyển người không đổi (≤ 0,25 đã ký), không ca nào mới hỏng. |
 
 ---
 
