@@ -64,6 +64,35 @@ Mỗi thành viên tự viết một mục bên dưới (chép mẫu, đổi ti�
 - **Một điều học được:** Bản tiêu chí chấp nhận phải được ký và khóa bằng mã hash trước khi nhìn thấy số liệu đo đạc thực tế để đảm bảo tính khách quan (đặt luật trước, xem số sau).
 - **Một điều còn chưa chắc:** Cách cân đối giữa việc hạ trần hoàn tiền để tránh rủi ro tài chính với việc giữ cho tỷ lệ ca phải chuyển người duyệt (escalation rate) không bị quá tải.
 
+## DangThuyDung-2A202604116
+
+### Phần việc phụ trách
+
+- **Vai trò:** Kỹ sư cổng 1 (chạy lệnh đo, code cổng phòng ngừa, chốt vòng 1).
+- **File chính:** `lab10/guards.py` (`pre_guard`, `write_gate`); chạy `lab10.eval`, `lab10.gate`, `lab10.checkpoint`, `lab10.grade`.
+- **Phiếu:** A câu 1.3 và 1.5 · B mục B0 (dòng 1–3), B1 (câu 2.1), B7.1 (câu 2.6) · C mục C0 (dòng 1–5), C2 lỗi 1 và lỗi 3 (câu 3.1), C7 (câu 3.5).
+
+### Đóng góp cụ thể
+
+- **Câu 2.1:** chạy mốc base, so với tiêu chí đã ký; chỉ ra 2 ngưỡng an toàn trượt (hoàn sai 20.000đ, 1 lỗi hãng oan, cùng từ `T-002@55`, kho HCM / hãng VNX) và tỉ lệ chuyển người sát trần (0,2273 / 0,25); khuyến nghị cổng "kết hợp".
+- **Câu 2.6 · cổng vòng 1** trong `write_gate`: (1) trước `issue_refund`, tính lại số tiền được hoàn từ tracking + chính sách hiệu lực theo ngày, trừ phần đã hoàn, đòi quá thì `modify` / `deny`; (2) trước `file_carrier_fault`, chỉ ghi lỗi khi `carrier_at_fault` theo tracking. Dùng `deny`/`modify` thay vì `escalate` để không vượt trần chuyển người 0,25 đã ký.
+- **Chốt vòng 1** (`checkpoint` `69a3da71`), chạy mốc prepared và `gate`: cả 9 dòng ĐẠT trên bộ nền. Chép mục `business` từ B7.4 của Hải vào config trước khi chốt.
+- **Vòng 2, thẻ S3:** chạy `grade` mốc prepared; phát hiện và sửa lỗi integrity giả do xuống dòng CRLF trên Windows (checkout lại LF, nội dung không đổi). Trace `S3-02` (áp chính sách v3 dù v4 đã hiệu lực) và `S3-42`/`S3-43` (lỗi thứ 3, 4 của MKD trong một ngày).
+- **Câu 3.5 · cổng vòng 2:** (3) `pre_guard` ghim chính sách theo ngày hiệu lực, không theo cờ `index_active`, ghi sự kiện `policy_pinned`; (5) trong `write_gate`, trần lỗi tự động mỗi hãng mỗi ngày đọc từ `ops_limits`, ghi sự kiện `carrier_strike_cap`. Hai sự kiện này là đầu vào cho các metric trong `monitors.py`.
+- Ghép lại bảng C8 của Vinh bị mất khi gộp nhánh.
+
+### Bằng chứng
+
+- **Commit:** `4fdce67` (B0, B1) · `25faff4` (cổng 1, 2 + B7.1) · `8fc035d` (Phiếu A câu 1.3, 1.5) · `e9a75de` (config `business`) · `b66bc32` (chốt vòng 1) · `5e2285b` (B0 dòng 3) · `26d9a90` (cổng ghim chính sách + C2 lỗi 1) · `14dac60` (trần lỗi hãng/ngày + C2 lỗi 3) · `d08878c` (C7) · `da8e4b8`, `d927a45` (C0) · `e2eeaab` (ghép C8 của Vinh).
+- **Mã lần chạy:** base `R-base-before-20261119-154112-bde05c` · cổng vòng 1 `R-base-after-20261119-155814-c54894` · prepared `R-base-prepared-20261119-163205-7f05d4` · S3 prepared `R-S3-prepared-20261119-163718-97c54a` · S3 sau ghim chính sách `R-S3-after-20261119-165606-64db18` · S3 sau trần lỗi hãng `R-S3-after-20261119-165948-f19d4a` (60/60 đạt) · grade `R-S3-grade-20261119-171012-baede0` (PASS-VISIBLE).
+- **Trong phiếu:** Phiếu B mục B0, B1, B7.1; Phiếu C mục C0, C2 (lỗi 1, lỗi 3), C7.
+- **Dùng AI:** dùng Claude (Claude Code) để đọc code lab, gợi ý và viết cổng trong `guards.py`, chạy lệnh và soạn nháp các ô phiếu; các con số, cổng và kết luận đã được đối chiếu lại với trace và report.
+
+### Exit ticket
+
+- **Một điều học được:** *(Dung tự viết)*
+- **Một điều còn chưa chắc:** *(Dung tự viết)*
+
 ## HoVaTen-MSSV
 
 ### Phần việc phụ trách
