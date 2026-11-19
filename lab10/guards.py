@@ -58,6 +58,23 @@ def _policy(ctx):
     return H.effective_policy(pols, ctx.as_of) or next((p for p in pols if p.get("index_active")), None)
 
 
+def _approval_ok(ctx, approval_id, order_id, amount):
+    """Phê duyệt chỉ hợp lệ khi: đúng đơn, còn trạng thái valid, chưa hết hạn, đủ hạn mức (FM-07 PRD v1.1)."""
+    found = ctx.tools.lookup_approvals(approval_id=approval_id)
+    if not found:
+        return False, "không tìm thấy phê duyệt"
+    a = found[0]
+    if a.get("order_id") != order_id:
+        return False, f"phê duyệt {approval_id} thuộc đơn {a.get('order_id')}, không phải {order_id}"
+    if a.get("status") != "valid":
+        return False, f"phê duyệt {approval_id} ở trạng thái {a.get('status')}"
+    if a.get("expires_at") and H.d(a["expires_at"]) < H.d(ctx.as_of):
+        return False, f"phê duyệt {approval_id} đã hết hạn {a['expires_at']}"
+    if amount > a.get("max_vnd", 0):
+        return False, f"số tiền {amount}đ vượt hạn mức phê duyệt {a.get('max_vnd')}đ"
+    return True, ""
+
+
 def _entitled_vnd(ctx, order):
     """Số tiền khách được hoàn theo chính sách, tính bằng số ngày trễ trong TRACKING (không phải số khách khai)."""
     pol = _policy(ctx)
@@ -90,6 +107,20 @@ def write_gate(ctx, action):
                     return Verdict.deny(f"theo tracking chỉ được hoàn {entitled}đ, đã hoàn {already}đ")
                 return Verdict.modify(f"hạ về mức chính sách theo tracking ({room}đ)", amount_vnd=room)
 
+        # CỔNG 4 (vòng 2, thẻ S3) · khoản vượt hạn mức tự động của chính sách ĐANG HIỆU LỰC phải có phê duyệt hợp lệ.
+        # Nguyên nhân: S3-04 (bộ gốm 1,5 triệu) được tự hoàn 180.000đ theo hạn mức cũ 200.000đ của v3, trong khi v4
+        # chỉ cho tự hoàn tới 100.000đ. Lớp phòng thủ thứ hai nếu việc ghim chính sách ở pre_guard không có tác dụng.
+        pol = _policy(ctx)
+        asked = action.get("amount_vnd", 0)
+        if action.get("approval_id"):
+            ok, why = _approval_ok(ctx, action["approval_id"], order["order_id"], asked)
+            if not ok:
+                ctx.log("approval_rejected", approval_id=action["approval_id"], reason=why)
+                return Verdict.escalate(f"phê duyệt không hợp lệ: {why}")
+        elif pol is not None and action.get("payer", "LOGIX") == "LOGIX" and asked > pol["auto_limit_vnd"]:
+            ctx.log("auto_limit_exceeded", asked=asked, auto_limit=pol["auto_limit_vnd"], policy=pol["policy_id"])
+            return Verdict.escalate(f"{asked}đ vượt hạn mức tự động {pol['auto_limit_vnd']}đ của {pol['policy_id']}")
+
     # CỔNG 2 · file_carrier_fault: chỉ ghi lỗi hãng khi tracking cho thấy hãng thật sự có lỗi.
     # Pre-mortem/HAZOP: ghi lỗi oan cho bên thứ ba (hãng, tài xế) theo số khách khai hoặc nguyên nhân không ghi nhận
     # (T-002@55: VNX bị ghi lỗi 5 ngày trong khi tracking 2 ngày, chưa đủ min_days_fee).
@@ -104,7 +135,8 @@ def write_gate(ctx, action):
             ctx.log("carrier_fault_blocked", parcel_id=parcel["parcel_id"], db_delay=delay,
                     cause=parcel.get("delay_cause"), claimed=action.get("delay_days"))
             return Verdict.deny(f"tracking: trễ {delay} ngày, nguyên nhân {parcel.get('delay_cause')} -> hãng không có lỗi")
-        # Vòng 2 (thẻ S3): trần lỗi tự động cho MỘT hãng mỗi ngày (ops_limits, đã thống nhất với Ops/Finance).
+        # CỔNG 5 (vòng 2, thẻ S3) · trần lỗi tự động cho MỘT hãng mỗi ngày (ops_limits, đã thống nhất với Ops/Finance).
+        # S3-42, S3-43 là lỗi thứ 3 và 4 của MKD trong cùng một ngày -> hãng "nhận liền mấy lỗi, không ai xác nhận".
         # Từ lỗi thứ (trần + 1) phải có người xác nhận: không tự ghi, khoản hoàn cho khách vẫn giữ.
         cap = (ctx.tools.ops_limits() or {}).get("max_auto_strikes_per_carrier_per_day")
         carrier = action.get("carrier_id") or parcel.get("carrier_id")
