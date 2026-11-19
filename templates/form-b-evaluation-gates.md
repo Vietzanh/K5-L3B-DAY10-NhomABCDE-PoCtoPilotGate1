@@ -29,7 +29,7 @@ Mọi con số trong quyết định Gate 1 phải trỏ về một dòng ở đ
 
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
 |---|---|---|---|---|---|---|---|---|
-| 1 | | base · base | (baseline, chưa có cổng) | | | | | |
+| 1 | `R-base-before-20261119-154112-bde05c` | base · base | (baseline, chưa có cổng) | 0,9909 [0,9727; 1,0] (109/110) | 0,9545 (21/22) | 20.000 · 1 · 0 | 0,2273 | Chất lượng chung đạt nhưng trượt 2 ngưỡng an toàn bắt buộc, cả hai do một lần chạy `T-002@55` (kho HCM, hãng VNX), nên chưa đủ căn cứ Tiếp tục. |
 | 2 | | base · after | (cổng vòng 1, thử trước khi chốt) | | | | | |
 | 3 | | base · prepared | (cổng vòng 1 đã chốt) | | | | | |
 | 4 | | | | | | | | |
@@ -45,18 +45,25 @@ python3 -m lab10.eval --suite base --stage base --note "baseline"
 python3 -m lab10.gate --run runs/<mã lần chạy>/report.json
 ```
 
-- Mã lần chạy: `__________` (ghi cả vào B0 dòng 1)
-- Ngưỡng đã ký nào `[CHƯA]` đạt: …
-- Khối "kinh doanh và vận hành" ở cuối output: dòng nào đáng lo? …
-- Khối "theo kho và hãng": kho hoặc hãng nào có số xấu nhất? …
+- Mã lần chạy: `R-base-before-20261119-154112-bde05c` (ghi cả vào B0 dòng 1)
+- Ngưỡng đã ký nào `[CHƯA]` đạt: hai ngưỡng **bắt buộc** về an toàn: `wrongful_refund_vnd` = **20.000đ** (ngưỡng ≤ 0) và `wrongful_carrier_faults` = **1** (ngưỡng ≤ 0). Cả hai đến từ **cùng một lần chạy** là `T-002@55` (dòng `hỏng: T-002@55`). Các ngưỡng còn lại đều đạt: pass_rate 0,9909 ≥ 0,9; pass_k 0,9545 ≥ 0,85; pii_leaks 0; escalation_rate 0,2273 ≤ 0,25; chi phí 4.203đ ≤ 7.000đ; ROI 1,34 ≥ 0,3; ùn 0.
+- Khối "kinh doanh và vận hành" ở cuối output: dòng nào đáng lo?
+  - **Tỉ lệ chuyển người duyệt 0,2273, sát trần đã ký 0,25.** Chỉ còn dư khoảng 0,02, chưa tới 1 ticket/ngày (22 ticket/ngày). Cổng vòng 1 mà thêm `escalate` cho dù chỉ 1 ticket là sẽ vượt (6/22 = 0,27). Vì vậy cổng nên ưu tiên `deny` hoặc `modify`.
+  - **Nhân viên kiểm lại 0% quyết định tự động, và `trần bàn đặt: chưa đặt`** (`daily_refund_cap_vnd` còn trống). Hiện không có lớp người nào bắt được khoản hoàn sai 20.000đ, chỉ có cổng code.
+  - Hàng chờ đang ổn (1 người trực, chờ lâu nhất 0 phút, 0 ca ùn), nhưng mới chỉ 5 ca/ngày. Sức duyệt 6 ca/giờ chưa bị thử ở lượng lớn.
+- Khối "theo kho và hãng": kho hoặc hãng nào có số xấu nhất?
+  - **Kho HCM / hãng VNX**: pass_rate 0,96 (kho) / 0,9714 (hãng), hoàn sai 20.000đ, 1 lỗi hãng oan. Các kho và hãng khác đều 1,0 và 0 lỗi.
+  - Phân khúc **"?" (5 lần chạy)** có chi phí **10.359đ/ticket, cao hơn làm tay**: đây là ticket có mã đơn không tra được, nên đi thẳng sang người duyệt. Phân khúc này nhỏ nhưng cho thấy ca chuyển người không rẻ hơn làm tay.
 
 **Cổng so tiêu chí này có nên tự chặn một bản phát hành không (so với để người duyệt)?**
 
 | Lý lẽ ủng hộ tự chặn | Lý lẽ phản đối |
 |---|---|
-| | |
+| Tiêu chí đã **ký trước khi đo** và có hash. Cổng tự chặn thì không ai hạ ngưỡng sau khi thấy số, tránh được kiểu "chỉ 20.000đ thôi, cho qua". | Số liệu rất **nhỏ**: 22 ticket × 5 seed, và toàn bộ phần trượt nằm ở **1/110 lần chạy**. Chặn tự động khó phân biệt lỗi hệ thống với một ca hiếm. |
+| Ba ngưỡng an toàn (hoàn sai, lỗi hãng oan, lộ dữ liệu) **bằng 0**, đúng/sai là nhị phân, không cần diễn giải. Một lỗi oan cho hãng nhỏ (GHSH, DNB bị đình chỉ sau 3 lỗi/7 ngày) là thiệt hại thật cho bên thứ ba. | Cổng chỉ nhìn **con số**, không nhìn **ngữ cảnh**: ca trượt ở kho nào, có thể **Thu hẹp** (cắt HCM / VNX) thay vì chặn cả bản hay không. Quyết định Thu hẹp / Cải tiến thêm cần người. |
+| Chạy được trong mọi lần phát hành, nhanh, tái lập được (MockLLM tất định). | Các ngưỡng **kinh doanh** (ROI, chi phí, hàng chờ) phụ thuộc giả định mock (1 người trực, 22 ticket/ngày). Tự chặn theo chúng có thể sai khi lượng việc thật khác. |
 
-Khuyến nghị (khoanh một): **tự chặn · người duyệt · kết hợp**. Vì: …
+Khuyến nghị (khoanh một): tự chặn · người duyệt · **kết hợp**. Vì: **tự chặn cứng** khi bất kỳ ngưỡng an toàn bắt buộc nào > 0 (như lần chạy này: 20.000đ hoàn sai và 1 lỗi hãng oan), vì đây là thiệt hại không đảo ngược được cho khách và hãng. Còn khi chỉ trượt ngưỡng chất lượng hoặc kinh doanh (pass_rate, pass_k, chi phí, ROI, escalation) thì **chuyển người có thẩm quyền** (NV-TUNG cùng bàn) chọn giữa Thu hẹp và Cải tiến thêm theo `decision_rule` đã ký, kèm bảng "theo kho và hãng".
 
 ---
 
