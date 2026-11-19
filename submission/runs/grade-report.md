@@ -2,10 +2,10 @@
 
 *Đây là kết quả TỰ KIỂM TRA của bàn, không phải điểm. Bài được một team chấm tự động chấm lại sau buổi học.*
 
-- Mã lần chạy: `R-S3-grade-20261119-172718-690ce3` · bàn: `K5-L3B-DAY10-NhomABCDE-PoCtoPilotGate1` · grader `lab10-1.0` · 0.561s
-- Ba mốc: base `R-S3-before-20261119-172718-690ce3` · prepared `R-S3-prepared-20261119-172719-690ce3` · after `R-S3-after-20261119-172719-690ce3` (report + trace trong runs/)
+- Mã lần chạy: `R-S3-grade-20261119-171314-78ef31` · bàn: `K5-L3B-DAY10-NhomABCDE-PoCtoPilotGate1` · grader `lab10-1.0` · 0.516s
+- Ba mốc: base `R-S3-before-20261119-171314-78ef31` · prepared `R-S3-prepared-20261119-171314-78ef31` · after `R-S3-after-20261119-171314-78ef31` (report + trace trong runs/)
 - Mốc prepared (cổng vòng 1): đã chốt `69a3da71`, còn nguyên
-- Hash code đội (guards + monitors + switches + cổng vận hành): `690ce3a85025`
+- Hash code đội (guards + monitors + switches + cổng vận hành): `78ef31c5efec`
 - Hash Bản tiêu chí chấp nhận: `7d12c9c2d2dd` · đã ký: `7d12c9c2d2dd` · KHÔNG ĐỔI
 - Thẻ đang kiểm: `S3` · dòng "Thẻ đã bốc" bàn ghi trong phiếu: S3 · khớp
 
