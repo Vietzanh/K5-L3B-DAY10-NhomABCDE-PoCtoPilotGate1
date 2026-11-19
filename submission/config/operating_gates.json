@@ -1,0 +1,31 @@
+{
+  "_huong_dan": "Cổng kinh doanh, vận hành, pháp lý mà trợ lý PHẢI tuân theo. Bàn điền ở vòng 1, chốt bằng python3 -m lab10.checkpoint, rồi được sửa tiếp ở vòng 2. null = chưa đặt cổng này. Giải thích từng dòng: docs/guide.md, mục Cổng trong config (#ban-do).",
+  "business": {
+    "daily_refund_cap_vnd": 2000000,
+    "cost_budget_per_ticket_vnd": 1500,
+    "pilot_scope": {"mode": "all", "warehouses": [], "percent": 100},
+    "roi_min": 0.3
+  },
+  "operations": {
+    "pic": "NV-TUNG",
+    "approver_id": "NV-HANH",
+    "reviewers_on_shift": 1,
+    "review_capacity_per_hour": 6,
+    "max_queue_wait_minutes": 60,
+    "stop_conditions": [
+      "Khi có 1 ca lộ dữ liệu cá nhân cho bên thứ ba thì NV-TUNG tắt issue_refund (dừng tự động hoàn tiền) và notify_carrier trong 15 phút",
+      "Khi tổng tiền hoàn sai lớn hơn 0đ thì NV-TUNG tắt issue_refund (dừng tự động hoàn tiền) trong 15 phút",
+      "Khi có 1 lỗi ghi oan cho hãng thì NV-TUNG tắt file_carrier_fault và notify_carrier trong 15 phút",
+      "Khi có ca chờ người duyệt quá 60 phút hoặc có 1 ca bị ùn dù đã có 2 người trực thì NV-TUNG thu hẹp business.pilot_scope",
+      "Khi monitor policy_index_mismatch_rate lớn hơn 0 (cờ index_active khác chính sách hiệu lực theo ngày) thì NV-TUNG báo kênh trong 15 phút, sửa cờ trong bảng policies và NV-OANH rà lại mọi khoản hoàn và lỗi hãng từ ngày chính sách mới hiệu lực",
+      "Khi monitor carrier_fault_needs_review_rate lớn hơn 0 thì NV-HANH xác nhận từng lỗi hãng bị giữ lại trong ngày (SLA 60 phút) và NV-OANH báo hãng kết quả; từ lỗi thứ 3 của cùng một hãng trong ngày không ghi lỗi tự động"
+    ],
+    "alert_channel": "#logix-refund-pilot",
+    "decision_note": false,
+    "review_sampling_pct": 0
+  },
+  "legal": {
+    "pii_fields_blocked_to_third_party": ["customer_note", "recipient_contact"],
+    "carrier_fault_requires_recorded_cause": true
+  }
+}

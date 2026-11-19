@@ -1,12 +1,17 @@
 {
-  "team": "",
-  "members": [],
-  "incident": "",
-  "decision_v1": "",
-  "decision_v2": "",
+  "team": "K5-L3B-DAY10-NhomABCDE-PoCtoPilotGate1",
+  "members": [
+    "TranVietAnh-2A202604029",
+    "TruongVanHai-2A202604018",
+    "DangThuyDung-2A202604116",
+    "TranThanhVinh-2A202603821"
+  ],
+  "incident": "S3",
+  "decision_v1": "Tiếp tục",
+  "decision_v2": "Tiếp tục",
   "three_lines": {
-    "environment_assumption": "",
-    "reduce_or_prevent": "",
-    "measure_in_pilot": ""
+    "environment_assumption": "Thiết kế dựa vào việc bảng chính sách có ngày hiệu lực (`effective_from/to`) được nhập đúng và điểm phát ghi đúng nguyên nhân trễ vào tracking; thẻ S3 cho thấy thế giới thật không tự giữ các bản sao khớp nhau (ngày 02/12 cờ `index_active` vẫn trỏ REFUND-v3, đơn O-2320 và O-2321 trống nguyên nhân), và cổng của đội vẫn tin tuyệt đối vào ngày hiệu lực và tracking.",
+    "reduce_or_prevent": "Cổng NGĂN được ba nhánh đã thấy trên thẻ (áp chính sách hết hạn, ghi lỗi hãng khi tracking trống nguyên nhân, tự hoàn vượt hạn mức 100.000đ) vì chúng chặn ngay trước lệnh ghi và chỉ đọc nguồn sự thật ngoài model (gói S3: hoàn sai 900.000đ → 0, hoàn thiếu 667.000đ → 0, lỗi oan 35 → 0); nhưng với tác hại cho hãng nói chung cổng chỉ GIẢM, vì trần đếm theo ngày nên 2 lỗi đầu mỗi ngày vẫn tự ghi và lỗi vẫn cộng dồn qua 7 ngày, còn nếu tracking ghi sai nguyên nhân thì cổng cũng ghi sai theo.",
+    "measure_in_pilot": "Đo lại trên ticket và model thật: tỉ lệ chuyển người và thời gian chờ người duyệt trong ngày bão (mock chỉ 0,0833 và 0 phút với 12 ticket/ngày), tỉ lệ lỗi ghi cho hãng bị hãng khiếu nại thành công trong cửa sổ 7 ngày (telemetry câu 1.4), giá trị `policy_index_mismatch_rate` quanh mỗi ngày đổi chính sách, và chi phí mỗi ticket cùng ROI với tiền LLM thật (mock 3.980đ/ticket, ROI 1,51)."
   }
 }
