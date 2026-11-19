@@ -119,8 +119,8 @@ Mỗi thành viên tự viết một mục bên dưới (chép mẫu, đổi ti�
 
 ### Exit ticket
 
-- **Một điều học được:** *(Vinh tự viết)*
-- **Một điều còn chưa chắc:** *(Vinh tự viết)*
+- **Một điều học được:** Lỗi nguy hiểm nhất của một trợ lý có quyền ghi sổ là lỗi chìm: ở `T-002@55` và `S3-04` khách hài lòng, trợ lý báo `refunded`, không có cảnh báo nào, người chịu là LogiX và hãng vận chuyển. Vì vậy cổng phải đối chiếu với nguồn sự thật (tracking, chính sách theo ngày hiệu lực) chứ không tin số model đưa ra, và monitor phải đếm sự kiện của cổng chứ không chờ ai phàn nàn.
+- **Một điều còn chưa chắc:** Hai monitor của mình chỉ sáng đèn khi cổng đã chặn hoặc ghim được. Nếu sự cố xảy ra ở chỗ chưa có cổng (ví dụ ngày hiệu lực gõ sai ngay trong bảng chính sách, hay lỗi hãng dồn qua nhiều ngày) thì chúng vẫn đọc 0. Mình chưa chắc nên đo trực tiếp hành vi của trợ lý thế nào để bắt được loại lỗi chưa ai lường trước.
 
 ## HoVaTen-MSSV
 
